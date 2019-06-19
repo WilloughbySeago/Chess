@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import numpy as np
 from Piece import *
 
@@ -15,6 +15,7 @@ class Board:
         self.master.update_idletasks()
         self.cell_size = self.max_size // self.n
         self.cells = []
+        self.entries = None
         self.start_dict = None
         self.canvas = None
         self.pieces = None
@@ -27,6 +28,8 @@ class Board:
         self.create_start()
         self.positions = self.start_dict.copy()
         self.controls()
+
+        self.master.bind('<Return>', lambda e: self.redraw())
 
     def create_canvas(self):
         self.canvas = Canvas(self.canvas_frame, width=self.max_size, height=self.max_size)
@@ -90,16 +93,60 @@ class Board:
             if p is not None:
                 self.place_piece(p, p.x, p.y)
 
-    def controls(self):
-        entries = []
-        for i in range(self.n):
-            entries.append([])
-            for j in range(self.n):
-                entries[i].append(Entry(self.controls_frame, width=12))
+    def redraw(self):
+        self.canvas.destroy()
+        self.create_canvas()
 
         for i in range(self.n):
             for j in range(self.n):
-                entry = entries[i][j]
+                entry = self.entries[i][j]
+                value = entry.get()
+                if value == '':
+                    self.positions[f'{i + 1}{j + 1}'] = None
+                    continue
+                if len(value) < 7:
+                    messagebox.showerror(title='Invalid Entry',
+                                         message=f'Invalid Entry:\n({i + 1},{j + 1})\nEnter \'colour type\'')
+                    print('value')
+                    continue
+                if value[:5] in ['black', 'white']:
+                    colour = value[:5]
+                else:
+                    messagebox.showerror(title='Invalid Colour',
+                                         message=f'Invalid Entry:\n({i + 1},{j + 1})\nEnter \'black\' or \'white\'')
+                    print('value')
+                    continue
+                if value[6:] in ['pawn', 'rook', 'knight', 'bishop', 'queen', 'king']:
+                    piece = value[6:]
+                else:
+                    messagebox.showerror(title='Invalid Type',
+                                         message=f'Invalid Entry:\n({i + 1},{j + 1})\nEnter \'type\' eg \'rook\'')
+                    print('value')
+                    continue
+                self.positions[f'{i + 1}{j + 1}'] = Piece(colour, piece, i + 1, j + 1)
+
+        for key in self.positions.keys():
+            p = self.positions[key]
+            if p is not None:
+                self.place_piece(p, p.x, p.y)
+
+    def clear(self):
+        for i in range(self.n):
+            for j in range(self.n):
+                entry = self.entries[i][j]
+                entry.delete(0, END)
+        self.redraw()
+
+    def controls(self):
+        self.entries = []
+        for i in range(self.n):
+            self.entries.append([])
+            for j in range(self.n):
+                self.entries[i].append(Entry(self.controls_frame, width=12))
+
+        for i in range(self.n):
+            for j in range(self.n):
+                entry = self.entries[i][j]
                 entry.place(relx=i / self.n, rely=j / self.n)  # .grid(row=i + 1, column=j + 1, pady=35)
                 try:
                     piece = self.positions[f'{i + 1}{j + 1}']
@@ -107,7 +154,8 @@ class Board:
                 except KeyError:
                     entry.delete(0, END)
 
-        ttk.Button(self.controls_frame, text='Submit', command=self.draw).place(x=568, y=550)#relx=-200, rely=550)
+        ttk.Button(self.controls_frame, text='Submit', command=self.redraw).place(x=568, y=550)  # relx=-200, rely=550)
+        ttk.Button(self.controls_frame, text='Clear', command=self.clear).place(x=0, y=550)
 
 
 def main():
