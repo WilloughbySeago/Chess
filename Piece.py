@@ -18,6 +18,5 @@ class Piece:
         }
         self.char = self.char_dict[piece][colour]
 
-
-p = Piece('white', 'king')
-print(p.char_dict)
+    def __repr__(self):
+        return f'<Chess piece: {self.colour} {self.piece} {self.char}>'
