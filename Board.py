@@ -38,13 +38,17 @@ class Board:
                     cells[i].append('white')
         return cells
 
-    def place_piece(self, p, x, y):
-        self.canvas.create_text()
+    def place_piece(self, piece, x, y):
+        board_x = x * self.cell_size + self.cell_size // 2
+        board_y = y * self.cell_size + self.cell_size // 2
+        self.canvas.create_text(board_x, board_y, text=piece.char, font='Verdana 20')
 
 
 def main():
     root = Tk()
     b = Board(root, 8)
+    p = Piece('black', 'king')
+    b.place_piece(p, 1, 1)
     root.mainloop()
 
 

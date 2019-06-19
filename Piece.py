@@ -3,8 +3,7 @@ from tkinter import ttk
 
 
 class Piece:
-    def __init__(self, master, colour, piece):
-        self.master = master
+    def __init__(self, colour, piece):
         self.colour = colour
         self.piece = piece
         self.char_dict = {
@@ -18,5 +17,5 @@ class Piece:
         self.char = self.char_dict[piece][colour]
 
 
-p = Piece(5, 'white', 'king')
+p = Piece('white', 'king')
 print(p.char_dict)
