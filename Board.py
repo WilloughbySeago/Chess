@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import ttk
 import numpy as np
+from Piece import *
 
 
 class Board:
@@ -36,6 +37,9 @@ class Board:
                 else:
                     cells[i].append('white')
         return cells
+
+    def place_piece(self, p, x, y):
+        self.canvas.create_text()
 
 
 def main():
