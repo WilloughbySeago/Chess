@@ -8,23 +8,25 @@ class Board:
     def __init__(self, master, n):
         self.master = master
         self.n = n
-        self.master.geometry('1200x600+10+10')
+        self.master.geometry('1250x600+10+10')
         self.master.title('Board')
         self.master.update_idletasks()
         self.max_size = min(self.master.winfo_width(), self.master.winfo_height())
         self.master.update_idletasks()
         self.cell_size = self.max_size // self.n
+        self.cells = []
         self.start_dict = None
         self.canvas = None
         self.pieces = None
         self.canvas_frame = ttk.Frame(self.master)
-        self.controls_frame = ttk.Frame(self.master, width=200)
+        self.controls_frame = ttk.Frame(self.master, width=650, height=600)
         self.canvas_frame.pack(side=LEFT)
         self.controls_frame.pack(side=LEFT)
         self.create_start()
         self.create_canvas()
         self.create_start()
         self.positions = self.start_dict.copy()
+        self.controls()
 
     def create_canvas(self):
         self.canvas = Canvas(self.canvas_frame, width=self.max_size, height=self.max_size)
@@ -46,7 +48,9 @@ class Board:
 
     def start_setup(self):
         for i in range(self.n):
+            self.cells.append([])
             for j in range(self.n):
+                self.cells[i].append(None)
                 try:
                     self.cells[i][j] = self.start_dict[f'{i}{j}']
                 except KeyError:
@@ -57,8 +61,8 @@ class Board:
 
         # pawns
         for i in range(self.n):
-            self.start_dict[f'{i}{2}'] = Piece('black', 'pawn', i + 1, 2)
-            self.start_dict[f'{i}{7}'] = Piece('white', 'pawn', i + 1, 7)
+            self.start_dict[f'{i + 1}{2}'] = Piece('black', 'pawn', i + 1, 2)
+            self.start_dict[f'{i + 1}{7}'] = Piece('white', 'pawn', i + 1, 7)
         # other pieces
         self.start_dict[f'{1}{8}'] = Piece('white', 'rook', 1, 8)
         self.start_dict[f'{8}{8}'] = Piece('white', 'rook', 8, 8)
@@ -78,10 +82,32 @@ class Board:
         self.start_dict[f'{5}{1}'] = Piece('black', 'king', 5, 1)
 
     def draw(self):
+        self.canvas.destroy()
+        self.create_canvas()
+
         for key in self.positions.keys():
             p = self.positions[key]
             if p is not None:
                 self.place_piece(p, p.x, p.y)
+
+    def controls(self):
+        entries = []
+        for i in range(self.n):
+            entries.append([])
+            for j in range(self.n):
+                entries[i].append(Entry(self.controls_frame, width=12))
+
+        for i in range(self.n):
+            for j in range(self.n):
+                entry = entries[i][j]
+                entry.place(relx=i / self.n, rely=j / self.n)  # .grid(row=i + 1, column=j + 1, pady=35)
+                try:
+                    piece = self.positions[f'{i + 1}{j + 1}']
+                    entry.insert(0, f'{piece.colour} {piece.piece}')
+                except KeyError:
+                    entry.delete(0, END)
+
+        ttk.Button(self.controls_frame, text='Submit', command=self.draw).place(x=568, y=550)#relx=-200, rely=550)
 
 
 def main():
