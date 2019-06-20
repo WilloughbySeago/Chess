@@ -138,6 +138,7 @@ class MoveChecker(Board):
         piece = self.positions[f'{p[0]}{p[1]}']
         allowed = []
         x, y = p  # extract x and y values from point
+
         # if the piece is a pawn check its possible spots
         if piece.piece == 'pawn':
             if piece.colour == 'white':
@@ -196,6 +197,39 @@ class MoveChecker(Board):
                         if contents.colour == 'white':
                             allowed.append(point)
 
+        # if the piece is a knight check all possible positions
+        if piece.piece == 'knight':
+            possibilities = [(x + 1, y - 2), (x + 2, y - 1), (x + 2, y + 1), (x + 1, y + 2), (x - 1, y - 2),
+                             (x - 2, y - 1), (x - 2, y + 1), (x - 1, y + 2)]
+            for point in possibilities:
+                if self.is_on_board(point):
+                    if self.can_move_to(point, piece.colour):
+                        allowed.append(point)
+
+        # if the piece is a rook check all possible positions
+        if piece.piece == 'rook':
+            allowed += self.check_x_y_directions(piece, x, y)
+
+        # if the piece is a bishop check all possible positions
+        if piece.piece == 'bishop':
+            allowed += self.check_diagonals(piece, x, y)
+
+        # if the piece is a queen check all possible positions
+        if piece.piece == 'queen':
+            allowed += self.check_x_y_directions(piece, x, y)
+            allowed += self.check_diagonals(piece, x, y)
+
+        # if the piece is a king check all possible positions
+        if piece.piece == 'king':
+            possibilities = [(x, y - 1), (x, y + 1), (x - 1, y + 1), (x - 1, y), (x - 1, y - 1), (x + 1, y + 1),
+                             (x + 1, y), (x + 1, y - 1)]
+            for point in possibilities:
+                if not self.is_on_board(point):
+                    continue
+                if not self.can_move_to(point, piece.colour):
+                    continue
+                allowed.append(point)
+
         for p in allowed:
             # draw a red circle on all spots the piece(s) could move to
             r = 15  # radius
@@ -203,6 +237,102 @@ class MoveChecker(Board):
                                     p[1] * self.cell_size - self.cell_size // 2 + r,
                                     p[0] * self.cell_size - self.cell_size // 2 - r,
                                     p[1] * self.cell_size - self.cell_size // 2 - r, fill='red')
+
+    def check_x_y_directions(self, piece, x, y):
+        allowed = []
+        # check positive x direction (right)
+        for i in range(1, self.n):
+            point = (x + i, y)
+            if not self.is_on_board(point):
+                break  # break if the edge of the board is reached
+            if not self.can_move_to(point, piece.colour):
+                break  # break if there is a piece of the same colour
+            allowed.append(point)
+            if not self.is_empty(point):
+                break  # if the square contains a piece of the opposite colour it is the last valid piece
+
+        # check negative x direction (left)
+        for i in range(1, self.n):
+            point = (x - i, y)
+            if not self.is_on_board(point):
+                break  # break if the edge of the board is reached
+            if not self.can_move_to(point, piece.colour):
+                break  # break if there is a piece of the same colour
+            allowed.append(point)
+            if not self.is_empty(point):
+                break  # if the square contains a piece of the opposite colour it is the last valid piece
+
+        # check positive y direction (down)
+        for i in range(1, self.n):
+            point = (x, y + i)
+            if not self.is_on_board(point):
+                break  # break if the edge of the board is reached
+            if not self.can_move_to(point, piece.colour):
+                break  # break if there is a piece of the same colour
+            allowed.append(point)
+            if not self.is_empty(point):
+                break  # if the square contains a piece of the opposite colour it is the last valid piece
+
+        # check negative y direction (up)
+        for i in range(1, self.n):
+            point = (x, y - i)
+            if not self.is_on_board(point):
+                break  # break if the edge of the board is reached
+            if not self.can_move_to(point, piece.colour):
+                break  # break if there is a piece of the same colour
+            allowed.append(point)
+            if not self.is_empty(point):
+                break  # if the square contains a piece of the opposite colour it is the last valid piece
+
+        return allowed
+
+    def check_diagonals(self, piece, x, y):
+        allowed = []
+        # check positive x, y direction (right, down)
+        for i in range(1, self.n):
+            point = (x + i, y + i)
+            if not self.is_on_board(point):
+                break  # break if the edge of the board is reached
+            if not self.can_move_to(point, piece.colour):
+                break  # break if there is a piece of the same colour
+            allowed.append(point)
+            if not self.is_empty(point):
+                break  # if the square contains a piece of the opposite colour it is the last valid piece
+
+        # check negative x, y direction (left, up)
+        for i in range(1, self.n):
+            point = (x - i, y - i)
+            if not self.is_on_board(point):
+                break  # break if the edge of the board is reached
+            if not self.can_move_to(point, piece.colour):
+                break  # break if there is a piece of the same colour
+            allowed.append(point)
+            if not self.is_empty(point):
+                break  # if the square contains a piece of the opposite colour it is the last valid piece
+
+        # check negative x, positive y direction (left, down)
+        for i in range(1, self.n):
+            point = (x - i, y + i)
+            if not self.is_on_board(point):
+                break  # break if the edge of the board is reached
+            if not self.can_move_to(point, piece.colour):
+                break  # break if there is a piece of the same colour
+            allowed.append(point)
+            if not self.is_empty(point):
+                break  # if the square contains a piece of the opposite colour it is the last valid piece
+
+        # check positive x, negative y direction (right, up)
+        for i in range(1, self.n):
+            point = (x + i, y - i)
+            if not self.is_on_board(point):
+                break  # break if the edge of the board is reached
+            if not self.can_move_to(point, piece.colour):
+                break  # break if there is a piece of the same colour
+            allowed.append(point)
+            if not self.is_empty(point):
+                break  # if the square contains a piece of the opposite colour it is the last valid piece
+
+        return allowed
 
     def can_move_to(self, point, colour):
         """Check if a square is either empty or contains a piece of the opposite colour that can be taken"""
@@ -216,6 +346,24 @@ class MoveChecker(Board):
                 return True  # if the piece is the opposite colour then a move there is valid
         except KeyError:
             return True  # if self.positions[xy] hasn't been created yet then it is empty
+
+    def is_empty(self, point):
+        try:
+            contents = self.positions[f'{point[0]}{point[1]}']
+            if contents is None:
+                return True
+            else:
+                return False
+        except KeyError:
+            return True
+
+    def is_on_board(self, point):
+        return 0 < point[0] <= self.n and 0 < point[1] <= 8
+
+    def get_opposite_colour(self, colour):
+        if colour == 'white':
+            return 'black'
+        return 'white'
 
 
 def main():
