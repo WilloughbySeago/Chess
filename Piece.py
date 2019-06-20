@@ -15,4 +15,7 @@ class Piece:
         self.char = self.char_dict[piece][colour]
 
     def __repr__(self):
-        return f'<Chess piece: {self.colour} {self.piece} {self.char}>'
+        if self.colour == 'white':
+            return f'<Chess piece: {self.colour} {self.piece} {self.char_dict[self.piece]["black"]}>'
+        else:
+            return f'<Chess piece: {self.colour} {self.piece} {self.char_dict[self.piece]["white"]}>'

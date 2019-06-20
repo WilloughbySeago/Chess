@@ -7,7 +7,6 @@ class Board:
     def __init__(self, master, n):
         self.master = master
         self.n = n
-        self.run_for_normal_chess()
         self.master.geometry('1250x600+10+10')
         self.master.title('Board')
         self.master.update_idletasks()
@@ -58,6 +57,7 @@ class Board:
                     self.cells[i][j] = self.start_dict[f'{i}{j}']
                 except KeyError:
                     self.cells[i][j] = None
+                    self.start_dict[f'{i}{j}'] = None
 
     def create_start(self):
         self.start_dict = {}
