@@ -36,6 +36,7 @@ class Board:
         self.style.configure('TFrame', background=self.colour)
         self.style.configure('TButton', background=self.colour)
         self.style.configure('TEntry', background=self.colour)
+        self.style.configure('TLabel', background=self.colour)
         self.master.configure(background=self.colour)
 
     def create_canvas(self):
@@ -162,11 +163,12 @@ class Board:
 
     def clear(self):
         """clear all entry fields and the board"""
-        for i in range(self.n):
-            for j in range(self.n):
-                entry = self.entries[i][j]
-                entry.delete(0, END)
-        self.redraw()
+        if messagebox.askyesno(title='Clear', message='Do you want to clear the board?'):
+            for i in range(self.n):
+                for j in range(self.n):
+                    entry = self.entries[i][j]
+                    entry.delete(0, END)
+            self.redraw()
 
     def controls(self):
         """Set up entry fields/buttons etc."""

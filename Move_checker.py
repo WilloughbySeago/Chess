@@ -142,11 +142,11 @@ class MoveChecker(Board):
         if piece.piece == 'pawn':
             if piece.colour == 'white':
                 point = (x, y - 1)  # can always move 1 forward
-                if self.is_empty(point, 'white'):
+                if self.can_move_to(point, 'white'):
                     allowed.append(point)
                 if piece.y == 7:
                     point = (x, y - 2)  # can move 2 forward the first time they move
-                    if self.is_empty(point, 'white') and self.is_empty((x, y - 1), 'white') and self.is_empty(
+                    if self.can_move_to(point, 'white') and self.can_move_to((x, y - 1), 'white') and self.can_move_to(
                             (x, y - 1), 'black'):  # check that the point to move to and the point between are valid
                         allowed.append(point)
                 point = (x - 1, y - 1)  # check diagonals, if there is a black piece then it is a valid spot
@@ -170,11 +170,11 @@ class MoveChecker(Board):
 
             else:
                 point = (x, y + 1)  # can always move 1 forward
-                if self.is_empty(point, 'black'):
+                if self.can_move_to(point, 'black'):
                     allowed.append(point)
                 if piece.y == 2:
                     point = (x, y + 2)  # can move 2 forward the first time the move
-                    if self.is_empty(point, 'black') and self.is_empty((x, y + 1), 'black') and self.is_empty(
+                    if self.can_move_to(point, 'black') and self.can_move_to((x, y + 1), 'black') and self.can_move_to(
                             (x, y + 1), 'white'):  # check that the point to move to and the point between are valid
                         allowed.append(point)
                 point = (x - 1, y + 1)  # check diagonals, if there is a white piece then it is a valid spot
@@ -204,7 +204,7 @@ class MoveChecker(Board):
                                     p[0] * self.cell_size - self.cell_size // 2 - r,
                                     p[1] * self.cell_size - self.cell_size // 2 - r, fill='red')
 
-    def is_empty(self, point, colour):
+    def can_move_to(self, point, colour):
         """Check if a square is either empty or contains a piece of the opposite colour that can be taken"""
         try:
             contents = self.positions[f'{point[0]}{point[1]}']  # get contents of square
