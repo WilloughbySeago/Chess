@@ -1,7 +1,3 @@
-from tkinter import *
-from tkinter import ttk
-
-
 class Piece:
     def __init__(self, colour, piece, x=None, y=None):
         self.colour = colour

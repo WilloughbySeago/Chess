@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter import ttk, messagebox
-import numpy as np
 from Piece import *
 
 
@@ -8,6 +7,7 @@ class Board:
     def __init__(self, master, n):
         self.master = master
         self.n = n
+        self.run_for_normal_chess()
         self.master.geometry('1250x600+10+10')
         self.master.title('Board')
         self.master.update_idletasks()
@@ -109,14 +109,14 @@ class Board:
                                          message=f'Invalid Entry:\n({i + 1},{j + 1})\nEnter \'colour type\'')
                     print('value')
                     continue
-                if value[:5] in ['black', 'white']:
+                if value[:5].lower() in ['black', 'white']:
                     colour = value[:5]
                 else:
                     messagebox.showerror(title='Invalid Colour',
                                          message=f'Invalid Entry:\n({i + 1},{j + 1})\nEnter \'black\' or \'white\'')
                     print('value')
                     continue
-                if value[6:] in ['pawn', 'rook', 'knight', 'bishop', 'queen', 'king']:
+                if value[6:].lower() in ['pawn', 'rook', 'knight', 'bishop', 'queen', 'king']:
                     piece = value[6:]
                 else:
                     messagebox.showerror(title='Invalid Type',
